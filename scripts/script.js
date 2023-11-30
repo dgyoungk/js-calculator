@@ -10,14 +10,48 @@ function Calculator() {
         this.method[name] = func;
     },
 
-    this.calculate = (str) => {
-        let expr = str.split(' ');
-        return this.method[expr[1]](+expr[0], +expr[2]);
+    this.operate = (lhs, operator, rhs) => {
+        return this.method[operator](lhs, rhs);
     }
 }
-
-let calc = new Calculator();
 
 let lhs;
 let operator;
 let rhs;
+
+// let operate = function(lhs, operator, rhs) {
+//     let calc = new Calculator();
+
+//     switch (operator) {
+//         case "+":
+//             console.log(calc.method[operator](lhs, rhs));
+//             break;
+//         case "-":
+//             console.log(calc.method[operator](lhs, rhs));
+//             break;
+//         case "*":
+//             console.log(calc.method[operator](lhs, rhs));
+//             break;
+//         case "/":
+//             console.log(calc.method[operator](lhs, rhs));
+//             break;
+//     }
+// };
+
+let calc = new Calculator();
+for (let i = 0; i < 5; i ++) {
+    switch(Math.floor(Math.random() * 4)) {
+        case 0:
+            console.log(calc.operate(5, "+", 1));
+            break;
+        case 1:
+            console.log(calc.operate(5, "-", 1));
+            break;
+        case 2:
+            console.log(calc.operate(5, "*", 1));
+            break;
+        case 3:
+            console.log(calc.operate(5, "/", 1));
+            break;
+    }
+}
