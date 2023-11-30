@@ -1,0 +1,27 @@
+* {
+    padding: 0%;
+    margin: 0%;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    width: 100vw;
+}
+
+
+.container { 
+    display: flex;
+    height: 100vh;
+}
+
+.calc-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* for debuggin */
+    border: 1px solid black;
+    height: 500px;
+    width: 500px;
+    margin: auto;
+}
