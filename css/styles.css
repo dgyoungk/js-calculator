@@ -1,7 +1,6 @@
 * {
     padding: 0%;
     margin: 0%;
-    box-sizing: border-box;
 }
 
 body {
@@ -17,6 +16,7 @@ body {
 
 .calc-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     /* for debuggin */
@@ -24,4 +24,23 @@ body {
     height: 500px;
     width: 500px;
     margin: auto;
+    padding: 8px;
+    gap: 16px;
+}
+
+.display {
+    height: 25%;
+    width: 100%;
+    background-color: lightgray;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 40px;
+}
+
+.btns {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: flex-end;
 }
