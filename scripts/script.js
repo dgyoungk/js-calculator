@@ -1,7 +1,7 @@
 let lhs;
 let operator;
 let rhs;
-let display = 0;
+let display = 12345;
 
 
 // constructor for Calculator operations
@@ -20,6 +20,11 @@ function Calculator() {
     this.operate = (lhs, operator, rhs) => {
         return this.method[operator](lhs, rhs);
     }
+}
+
+// function to get all the buttons from the DOM
+function getButtons() {
+    return document.querySelectorAll('button');
 }
 
 
@@ -71,10 +76,11 @@ function createButtons() {
     }
 
     styleButtons();
+    attachMiscButtonEvents();
 }
 
 function styleButtons() {
-    const buttons = document.querySelectorAll('button');
+    const buttons = getButtons();
     for (const button of buttons) {
         switch (button.className) {
             case 'misc-btn':
@@ -93,7 +99,31 @@ function styleButtons() {
     }
 }
 
-
+function attachMiscButtonEvents() {
+    // for number and op buttons, use named functions
+    // for misc buttons, use arrow functions
+    const miscs = document.querySelectorAll('.misc-btn');
+    for (const miscBtn of miscs) {
+        miscBtn.addEventListener('click', (e) => {
+            let result = document.querySelector('.display p');
+            switch(e.target.innerText) {
+                case 'A/C':
+                    result.textContent = '';
+                    break;
+                case '+/-':
+                    if (+result.textContent < 0) {
+                        result.textContent = `${Math.abs(display)}`;
+                    } else {
+                        result.textContent = `${Math.abs(display) * -1}`;
+                    }
+                    break; 
+                case 'DEL':
+                    result.textContent = result.textContent.slice(0, result.textContent.length - 1);
+                    break;
+            }       
+        });
+    }
+}
 
 
 
