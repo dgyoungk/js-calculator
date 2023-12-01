@@ -26,6 +26,7 @@ body {
     margin: auto;
     padding: 8px;
     gap: 16px;
+    background-color: #C0FDFB;
 }
 
 .display {
@@ -36,6 +37,7 @@ body {
     justify-content: flex-end;
     align-items: center;
     font-size: 40px;
+    border: 3px solid black;
 }
 
 .btns {
