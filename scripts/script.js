@@ -171,7 +171,9 @@ function attachOperationEvents() {
                 initialDisplay = calc.operate(lhs, operator, rhs);
                 calcView.textContent = initialDisplay;
                 lhs = initialDisplay;
-                rhs = "0";
+                rhs = "";
+                operatorSet = false;
+                isDecimal = false;
             } else if (op.innerText === '.') {
                 if (!calcView.textContent.includes(op.innerText) || operatorSet) {
                     calcView.textContent += op.innerText;
