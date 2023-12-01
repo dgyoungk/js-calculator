@@ -63,6 +63,11 @@ function createButtons() {
     const btnContainer = document.querySelector('.btns');
     for (let i = 0; i < 16; i++) {
         const btn = document.createElement('button');
+        if (typeof buttonText[i] === "number") {
+            btn.classList.toggle('num-btn');
+        } else {
+            btn.classList.toggle('op-btn');
+        }
         btn.style.width = '125px';
         btn.style.height = '100px';
         btn.style.border = "1px solid black";
@@ -72,11 +77,6 @@ function createButtons() {
             TODO:
             figure out the condition to set the class for number buttons and operator buttons 
         */
-        // if () {
-        //     btn.classList.toggle('num-btn');
-        // } else {
-        //     btn.classList.toggle('op-btn');
-        // }
         btnContainer.appendChild(btn);
     }
 }
