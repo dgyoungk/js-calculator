@@ -1,9 +1,10 @@
 let lhs = '';
 let rhs = '';
 let operator;
-let operatorSet = false;
+let isOperatorSet = false;
 let isDecimal = false;
 let initialDisplay = 0;
+let display = 0;
 
 
 // constructor for Calculator operations
@@ -31,25 +32,6 @@ function getDisplay() {
 function getButtons() {
     return document.querySelectorAll('button');
 }
-
-// let operate = function(lhs, operator, rhs) {
-//     let calc = new Calculator();
-
-//     switch (operator) {
-//         case "+":
-//             console.log(calc.method[operator](lhs, rhs));
-//             break;
-//         case "-":
-//             console.log(calc.method[operator](lhs, rhs));
-//             break;
-//         case "*":
-//             console.log(calc.method[operator](lhs, rhs));
-//             break;
-//         case "/":
-//             console.log(calc.method[operator](lhs, rhs));
-//             break;
-//     }
-// };
 
 let buttonText = ["A/C", "+/-", "DEL", "+", 1, 2, 3, '-', 4, 5, 6, '*', 7, 8, 9, '/', 0, '.', '='];
 
@@ -115,12 +97,12 @@ function attachMiscButtonEvents() {
                     result.textContent = initialDisplay;
                     lhs = '';
                     rhs = '';
-                    operatorSet = false;
+                    isOperatorSet = false;
                     isDecimal = false;
                     operator = '';
                     break;
                 case '+/-':
-                    if (!operatorSet) {
+                    if (!isOperatorSet) {
                         if (+result.textContent < 0) {
                             result.textContent = `${Math.abs(+lhs)}`
                         } else {
@@ -132,8 +114,9 @@ function attachMiscButtonEvents() {
                     }
                     break; 
                 case 'DEL':
-                    !operatorSet ? lhs = lhs.slice(0, lhs.length - 1) : rhs = rhs.slice(0, rhs.length - 1);
-                    if (lhs.length === 0 || rhs.length === 0) {
+                    !isOperatorSet ? lhs = lhs.split('').slice(0, lhs.length - 1).join('') :
+                                         rhs = rhs.split('').slice(0, rhs.length - 1).join('');
+                    if (lhs.length === 0 && !isOperatorSet) {
                         result.textContent = initialDisplay;
                     }
                     result.textContent = result.textContent.slice(0, result.textContent.length - 1);
@@ -149,11 +132,30 @@ function attachNumberButtonEvents() {
     resultView.textContent = initialDisplay;
     for (const num of numbers) {
         num.addEventListener('click', () => {
-            if (operatorSet) {
-                isDecimal ? rhs += num.innerText : rhs = num.innerText;
-                resultView.textContent += num.innerText;
+            if (isOperatorSet) {
+                if (isDecimal) {
+                    rhs += num.innerText;
+                    resultView.textContent += num.innerText;
+                } else {
+                    if (rhs.length >= 1) {
+                        rhs += num.innerText;
+                        resultView.textContent += num.innerText;
+                    } else {
+                        rhs = num.innerText;
+                        resultView.textContent = num.innerText;
+                    }
+                }
+                
             } else {
-                isDecimal ? lhs += num.innerText : lhs = num.innerText;
+                if (isDecimal) {
+                    lhs += num.innerText
+                } else {
+                    if (lhs.length >= 1) {
+                        lhs += num.innerText;
+                    } else {
+                        lhs = num.innerText;
+                    }
+                }
                 resultView.textContent = lhs;
             }
         })
@@ -166,27 +168,36 @@ function attachOperationEvents() {
     // create calculator object
     let calc = new Calculator();
     for (const op of ops) {
-        op.addEventListener('click', () => {
+        op.addEventListener('click', (e) => {
             if (op.innerText === '=') {
-                initialDisplay = calc.operate(lhs, operator, rhs);
-                calcView.textContent = initialDisplay;
-                lhs = initialDisplay;
+                display = calc.operate(lhs, operator, rhs);
+                calcView.textContent = display;
+                lhs = String(display);
                 rhs = "";
-                operatorSet = false;
+                isOperatorSet = false;
                 isDecimal = false;
             } else if (op.innerText === '.') {
-                if (!calcView.textContent.includes(op.innerText) || operatorSet) {
+                if (!calcView.textContent.includes(op.innerText) || isOperatorSet) {
                     calcView.textContent += op.innerText;
-                    operatorSet ? rhs += op.innerText : lhs += op.innerText;
+                    isOperatorSet ? rhs += op.innerText : lhs += op.innerText;
                     isDecimal = true;
                 } else {
                     op.diabled = true;
                 }
             } else {
-                operator = op.innerText;
-                operatorSet = true;
-                isDecimal = false;
-                calcView.textContent += operator;
+                if (isOperatorSet) {
+                    // multiple operations: does operation before a rhs variable is set;
+                    // figure out how to set the rhs variable first before operating
+                    display = calc.operate(lhs, operator, rhs);
+                    lhs = String(display);
+                    rhs = "";
+                    isDecimal = false;
+                    calcView.textContent = lhs;
+                } else {
+                    operator = op.innerText;
+                    isOperatorSet = true;
+                    isDecimal = false;
+                }
             }
         });
     }
