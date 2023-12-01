@@ -1,5 +1,6 @@
 let lhs;
 let operator;
+let operatorSet = false;
 let rhs;
 let display = 12345;
 
@@ -21,13 +22,6 @@ function Calculator() {
         return this.method[operator](lhs, rhs);
     }
 }
-
-// function to get all the buttons from the DOM
-function getButtons() {
-    return document.querySelectorAll('button');
-}
-
-
 
 // let operate = function(lhs, operator, rhs) {
 //     let calc = new Calculator();
@@ -77,6 +71,8 @@ function createButtons() {
 
     styleButtons();
     attachMiscButtonEvents();
+    attachNumberButtonEvents();
+    attachOperationEvents();
 }
 
 function styleButtons() {
@@ -100,7 +96,6 @@ function styleButtons() {
 }
 
 function attachMiscButtonEvents() {
-    // for number and op buttons, use named functions
     // for misc buttons, use arrow functions
     const miscs = document.querySelectorAll('.misc-btn');
     for (const miscBtn of miscs) {
@@ -125,7 +120,49 @@ function attachMiscButtonEvents() {
     }
 }
 
+function attachNumberButtonEvents() {
+    const numbers = document.querySelectorAll('.num-btn');
+    for (const num of numbers) {
+    }
+}
 
+function attachOperationEvents() {
+    const ops = document.querySelectorAll('.op-btn');
+    let calcView = document.querySelector('.display p');
+    // create calculator object
+    let calc = new Calculator();
+    for (const op of ops) {
+        op.addEventListener('click', () => {
+            switch(op.innerText) {
+                case "+":
+                    operator = op.innerText;
+                    operatorSet = true;
+                    break;
+                case "-":
+                    operator = op.innerText;
+                    operatorSet = true;
+                    break;
+                case "*":
+                    operator = op.innerText;
+                    operatorSet = true;
+                    break;
+                case "/":
+                    operator = op.innerText;
+                    operatorSet = true;
+                    break;
+                case '=':
+                    display = calc.operate(lhs, operator, rhs);
+                    calcView.textContent = display;
+                    // add logic here to do the calculation and display the result
+                    break;
+                case '.':
+                    calcView.textContent += '.';
+                    break;
+                    
+            }
+        });
+    }
+}
 
 
 window.addEventListener('load', createButtons);
