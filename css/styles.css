@@ -26,7 +26,7 @@ body {
     margin: auto;
     padding: 8px;
     gap: 8px;
-    background-color: #C0FDFB;
+    background-color: black;
 }
 
 .display {
@@ -36,8 +36,10 @@ body {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    font-size: 40px;
+    font-size: 44px;
     border: 3px solid black;
+    border-radius: 5px;
+    box-sizing: border-box;
 }
 
 .btns {
@@ -45,4 +47,9 @@ body {
     flex-wrap: wrap;
     justify-content: flex-end;
     align-items: flex-end;
+    background-color: black;
+}
+
+button:active {
+    background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
 }
