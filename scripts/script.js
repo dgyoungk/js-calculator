@@ -263,5 +263,31 @@ function attachOperationEvents() {
     }
 }
 
+// handles keyboard events
+function attachKeyboardEvents() {
+    let keyDisplay = getDisplay();
+    /*
+        TODO:
+        - assign keyboard value pressed to lhs, rhs, and operator variables
+        and display the results
+        - enter key is the same as '=', escape is the same as 'A/C'
+        - figure out how to assign +/- using keyboard
+        - backspace is the same as 'DEL'
+        - research more on modifier key and key combination (how to get the value, mostly for operators)
+    */
+    document.addEventListener('keydown', (e) => {
+        const keyName = e.key;
+        
+        if (keyDisplay.textContent === String(initialDisplay)) {
+            keyDisplay.textContent = keyName;
+        } else {
+            keyDisplay.textContent += keyName;
+        }
+
+        
+
+        
+    });
+}
 
 window.addEventListener('load', createButtons);
