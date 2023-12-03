@@ -104,8 +104,6 @@ function createCalculator() {
     attachNumberButtonEvents();
     attachOperationEvents();
     attachKeyboardEvents();
-
-    alert("To trigger the +/-, use Alt and the minus key");
 }
 
 function createButtons() {
