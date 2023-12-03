@@ -104,6 +104,8 @@ function createCalculator() {
     attachNumberButtonEvents();
     attachOperationEvents();
     attachKeyboardEvents();
+
+    alert("To trigger the +/-, use Alt and the minus key");
 }
 
 function createButtons() {
@@ -337,8 +339,30 @@ function attachKeyboardEvents() {
                         break;
                 }
                 
-            // for keys that don't need modifiers
-            } else {
+            // altkey used with the minus key to trigger +/-
+            } else if (e.altKey) {
+                if (keyName === '-') {
+                    if (!isOperatorSet || operator !== '=') {
+                        if (+keyDisplay.textContent < 0) {
+                            if (isOperatorSet) {
+                                rhs = String(Math.abs(+rhs));
+                                keyDisplay.textContent = rhs;
+                            } else {
+                                lhs = String(Math.abs(+lhs));
+                                keyDisplay.textContent = lhs;
+                            }       
+                        } else {
+                            if (isOperatorSet) {
+                                rhs = String(Math.abs(+rhs) * -1);
+                                keyDisplay.textContent = rhs;
+                            } else {
+                                lhs = String(Math.abs(+lhs) * -1);
+                                keyDisplay.textContent = lhs;
+                            }
+                        }
+                    }
+                }
+            } else { // for keys that don't need modifiers
                 switch (keyName) {
                     case '/':
                         e.preventDefault();
@@ -374,7 +398,7 @@ function attachKeyboardEvents() {
                         e.preventDefault();
                         if (lhs && rhs && operator) {
                             calculate();
-                            operator = keyName;
+                            operator = '=';
                         } else {
                             alert("Oops, try again");
                         }
