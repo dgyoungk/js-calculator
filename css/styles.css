@@ -11,7 +11,8 @@ body {
 
 .container { 
     display: flex;
-    height: 100vh;
+    height: 95vh;
+    flex-direction: column;
 }
 
 .calc-container {
@@ -52,4 +53,16 @@ body {
 
 button:active {
     background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
+}
+
+.hint {
+    display: flex;
+    justify-content: center;
+    padding: 8px;
+    font-size: large;
+}
+
+footer {
+    text-align: center;
+    font-size: large;
 }
