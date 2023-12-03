@@ -266,23 +266,113 @@ function attachOperationEvents() {
 // handles keyboard events
 function attachKeyboardEvents() {
     let keyDisplay = getDisplay();
+    let keyboardCalc = new Calculator();
     /*
         TODO:
-        - assign keyboard value pressed to lhs, rhs, and operator variables
-        and display the results
-        - enter key is the same as '=', escape is the same as 'A/C'
-        - figure out how to assign +/- using keyboard
-        - backspace is the same as 'DEL'
-        - research more on modifier key and key combination (how to get the value, mostly for operators)
+        - figure out the +/- thing
+        - maybe add a condition for the ctrl key plus either plus or minus key
+        - figure out chain operations
     */
     document.addEventListener('keydown', (e) => {
         const keyName = e.key;
-        
-        if (keyDisplay.textContent === String(initialDisplay)) {
-            keyDisplay.textContent = keyName;
+
+        if (+keyName) {
+            if (!isOperatorSet) {
+                if (!lhs) {
+                    lhs = keyName;
+                    keyDisplay.textContent = lhs;
+                } else {
+                    lhs += keyName;
+                    keyDisplay.textContent = lhs;
+                }
+            } else {
+                if (!rhs) {
+                    rhs += keyName;
+                    keyDisplay.textContent = rhs;
+                } else {
+                    rhs += keyName;
+                    keyDisplay.textContent = rhs;
+                }
+                
+            }
         } else {
-            keyDisplay.textContent += keyName;
+            // for keys that need modifiers
+            if (e.shiftKey) {
+                switch (keyName) {
+                    case '*':
+                        operator = keyName;
+                        keyDisplay.textContent += operator;
+                        break;
+                    case "+":
+                        operator = keyName;
+                        keyDisplay.textContent += operator;
+                        break;
+                }
+                isOperatorSet = true;
+            // for keys that don't need modifiers
+            } else {
+                switch (keyName) {
+                    case '/':
+                        e.preventDefault();
+                        operator = keyName;
+                        isOperatorSet = true;
+                        break;
+                    case '-':
+                        operator = keyName;
+                        isOperatorSet = true;
+                        break;
+                    // same as clicking 'DEL'
+                    case 'Backspace':
+                        e.preventDefault();
+                        !operator ? lhs = lhs.split('').slice(0, lhs.length - 1).join('') :
+                               rhs = rhs.split('').slice(0, rhs.length - 1).join('');
+                        !lhs ? keyDisplay.textContent = initialDisplay :
+                               keyDisplay.textContent = keyDisplay.textContent.slice(0, keyDisplay.textContent.length - 1);
+                        break;
+                    // same as clicking '='
+                    case 'Enter':
+                        e.preventDefault();
+                        if (lhs && rhs && operator) {
+                            display = keyboardCalc.operate(lhs, operator, rhs);
+                            if (display !== undefined) {
+                                lhs = String(display);
+                                rhs = '';
+                                isDecimal = false;
+                                isOperatorSet = false;
+                                // checks for a decimal; if so, then returns the first 3 digits
+                                if (String(display).includes('.')) {
+                                    display = String(+display.toFixed(3));
+                                }
+                                keyDisplay.textContent = display;
+                            } else {
+                                resetCalculator();
+                                keyDisplay.textContent = initialDisplay;
+                            }
+                        } else {
+                            alert("Oops, try again");
+                        }
+                        
+                        break;
+                    // same as clicking 'A/C'
+                    case 'Escape':
+                        e.preventDefault();
+                        console.log(+keyName);
+                        resetCalculator();
+                        keyDisplay.textContent = initialDisplay;
+                        break;
+                    case '.':
+                        if (operator) {
+                            rhs += keyName;
+                            keyDisplay.textContent = rhs;
+                        } else {
+                            lhs += keyName;
+                            keyDisplay.textContent = lhs;
+                        }
+                        break;
+                }
+            }
         }
+        
 
         
 
