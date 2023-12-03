@@ -1,3 +1,4 @@
+// global variables
 let lhs = '';
 let rhs = '';
 let operator;
@@ -30,6 +31,8 @@ function Calculator() {
     }
 }
 
+
+// helper functions
 function getDisplay() {
     return document.querySelector('.display p');
 }
@@ -50,9 +53,59 @@ function resetCalculator() {
     isOperatorSet = false;
 }
 
-let buttonText = ["A/C", "+/-", "DEL", "+", 7, 8, 9, '-', 4, 5, 6, '*', 1, 2, 3, '/', 0, '.', '='];
+function calculate() {
+    let calc = new Calculator();
+    const calcResult = getDisplay();
+    display = calc.operate(lhs, operator, rhs);
+    if (display !== undefined) {
+        lhs = String(display);
+        rhs = '';
+        isDecimal = false;
+        isOperatorSet = false;
+        // checks for a decimal; if so, then returns the first 3 digits
+        if (String(display).includes('.')) {
+            display = String(+display.toFixed(3));
+        }
+        calcResult.textContent = display;
+    } else { 
+        // when the user tries to divide by 0
+        resetCalculator();
+        calcResult.textContent = initialDisplay;
+    }
+}
+
+function chainOperation() {
+    let calc = new Calculator();
+    const calcResult = getDisplay();
+    display = calc.operate(lhs, operator, rhs);
+    if (display !== undefined) {
+        lhs = String(display);
+        rhs = '';
+        isDecimal = false;
+        // checks for a decimal; if so, then returns the first 3 digits
+        if (String(display).includes('.')) {
+            display = String(+display.toFixed(3));
+        }
+        calcResult.textContent = lhs;
+    } else { 
+        // when the user tries to divide by 0
+        resetCalculator();
+        calcResult.textContent = initialDisplay;
+    }
+}
 
 // DOM manipulations
+let buttonText = ["A/C", "+/-", "DEL", "+", 7, 8, 9, '-', 4, 5, 6, '*', 1, 2, 3, '/', 0, '.', '='];
+
+function createCalculator() {
+    createButtons();
+    styleButtons();
+    attachMiscButtonEvents();
+    attachNumberButtonEvents();
+    attachOperationEvents();
+    attachKeyboardEvents();
+}
+
 function createButtons() {
     const btnContainer = document.querySelector('.btns');
     for (let i = 0; i < 19; i++) {
@@ -80,14 +133,7 @@ function createButtons() {
             figure out the condition to set the class for number buttons and operator buttons 
         */
         btnContainer.appendChild(btn);
-    }
-
-    // calls to all the other functions
-    styleButtons();
-    attachMiscButtonEvents();
-    attachNumberButtonEvents();
-    attachOperationEvents();
-    attachKeyboardEvents();
+    }    
 }
 
 function styleButtons() {
@@ -206,53 +252,23 @@ function attachNumberButtonEvents() {
 function attachOperationEvents() {
     const ops = document.querySelectorAll('.op-btn');
     let calcView = getDisplay();
-    // create calculator object
-    let calc = new Calculator();
     for (const op of ops) {
         op.addEventListener('click', (e) => {
             if (op.innerText === '=') {
-                display = calc.operate(lhs, operator, rhs);
-                if (display !== undefined) {
-                    lhs = String(display);
-                    rhs = "";
-                    isOperatorSet = false;
-                    isDecimal = false;
-                    operator = e.target.innerText;
-                    // checks for a decimal; if so, then returns the first 3 digits
-                    if (String(display).includes('.')) {
-                        display = String(+display.toFixed(3));
-                    }
-                    calcView.textContent = display;
-                } else {
-                    // when the user tries to divide by 0
-                    resetCalculator();
-                    calcView.textContent = initialDisplay;
-                }
+                calculate();
+                operator = e.target.innerText;
             } else if (op.innerText === '.') {
                 if (!calcView.textContent.includes(op.innerText) || isOperatorSet) {
-                    calcView.textContent += op.innerText;
                     isOperatorSet ? rhs += op.innerText : lhs += op.innerText;
                     isDecimal = true;
+                    calcView.textContent += op.innerText;
                 } else {
                     op.diabled = true;
                 }
             } else {
-                // // disable the +/- when operator is set i.e. an operation starts
-                // let plusMinus = document.querySelector('.plus-minus');
-                // plusMinus.disabled = true;
                 if (isOperatorSet && lhs && rhs) {
-                    display = calc.operate(lhs, operator, rhs);
-                    if (display !== undefined) {
-                        lhs = String(display);
-                        rhs = "";
-                        isDecimal = false;
-                        operator = e.target.innerText;
-                        calcView.textContent = lhs;
-                    } else {
-                        resetCalculator();
-                        calcView.textContent = initialDisplay;
-                    }
-                    
+                    chainOperation();
+                    operator = e.target.innerText;
                 } else {
                     operator = op.innerText;
                     isOperatorSet = true;
@@ -266,17 +282,16 @@ function attachOperationEvents() {
 // handles keyboard events
 function attachKeyboardEvents() {
     let keyDisplay = getDisplay();
-    let keyboardCalc = new Calculator();
     /*
         TODO:
         - figure out the +/- thing
         - maybe add a condition for the ctrl key plus either plus or minus key
-        - figure out chain operations
     */
     document.addEventListener('keydown', (e) => {
         const keyName = e.key;
 
-        if (+keyName) {
+        // number key handling
+        if (+keyName || keyName === '0') {
             if (!isOperatorSet) {
                 if (!lhs) {
                     lhs = keyName;
@@ -291,35 +306,60 @@ function attachKeyboardEvents() {
                     keyDisplay.textContent = rhs;
                 } else {
                     rhs += keyName;
-                    keyDisplay.textContent = rhs;
+                    keyDisplay.textContent += keyName;
                 }
                 
             }
+        // operation & misc key handlers
         } else {
             // for keys that need modifiers
             if (e.shiftKey) {
                 switch (keyName) {
                     case '*':
-                        operator = keyName;
-                        keyDisplay.textContent += operator;
+                        if (isOperatorSet && lhs && rhs) {
+                            chainOperation();
+                            operator = keyName;
+                        } else {
+                            operator = keyName;
+                            isOperatorSet = true;
+                            //keyDisplay.textContent += operator;
+                        }
                         break;
                     case "+":
-                        operator = keyName;
-                        keyDisplay.textContent += operator;
+                        if (isOperatorSet && lhs && rhs) {
+                            chainOperation();
+                            operator = keyName;
+                        } else {
+                            operator = keyName;
+                            isOperatorSet = true;
+                            //keyDisplay.textContent += operator;
+                        }
                         break;
                 }
-                isOperatorSet = true;
+                
             // for keys that don't need modifiers
             } else {
                 switch (keyName) {
                     case '/':
                         e.preventDefault();
-                        operator = keyName;
-                        isOperatorSet = true;
+                        if (isOperatorSet && lhs && rhs) {
+                            chainOperation();
+                            operator = keyName;
+                        } else {
+                            operator = keyName;
+                            isOperatorSet = true;
+                            //keyDisplay.textContent += operator;
+                        }
                         break;
                     case '-':
-                        operator = keyName;
-                        isOperatorSet = true;
+                        if (isOperatorSet && lhs && rhs) {
+                            chainOperation();
+                            operator = keyName;
+                        } else {
+                            operator = keyName;
+                            isOperatorSet = true;
+                            //keyDisplay.textContent += operator;
+                        }
                         break;
                     // same as clicking 'DEL'
                     case 'Backspace':
@@ -333,21 +373,8 @@ function attachKeyboardEvents() {
                     case 'Enter':
                         e.preventDefault();
                         if (lhs && rhs && operator) {
-                            display = keyboardCalc.operate(lhs, operator, rhs);
-                            if (display !== undefined) {
-                                lhs = String(display);
-                                rhs = '';
-                                isDecimal = false;
-                                isOperatorSet = false;
-                                // checks for a decimal; if so, then returns the first 3 digits
-                                if (String(display).includes('.')) {
-                                    display = String(+display.toFixed(3));
-                                }
-                                keyDisplay.textContent = display;
-                            } else {
-                                resetCalculator();
-                                keyDisplay.textContent = initialDisplay;
-                            }
+                            calculate();
+                            operator = keyName;
                         } else {
                             alert("Oops, try again");
                         }
@@ -363,21 +390,18 @@ function attachKeyboardEvents() {
                     case '.':
                         if (operator) {
                             rhs += keyName;
+                            isDecimal = true;
                             keyDisplay.textContent = rhs;
                         } else {
                             lhs += keyName;
+                            isDecimal = true;
                             keyDisplay.textContent = lhs;
                         }
                         break;
                 }
             }
-        }
-        
-
-        
-
-        
+        }        
     });
 }
 
-window.addEventListener('load', createButtons);
+window.addEventListener('load', createCalculator);
