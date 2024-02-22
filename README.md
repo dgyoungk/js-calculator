@@ -7,6 +7,6 @@
         -conversion to negative integer and back
         -allows calculations to be done with keyboard and mouse
 
-### Live Preview: [link](https://dgyoungk.github.io/js-calculator/)
+### Live Preview: [text](https://dgyoungk.github.io/js-calculator/)
 
 Author: Daniel Kwon 2023
